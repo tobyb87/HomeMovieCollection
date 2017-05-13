@@ -1,0 +1,31 @@
+{
+  "name": "clear",
+  "version": "1.0.0",
+  "description": "Home Move Database",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobyb87/HomeMovieCollection.git"
+  },
+  "keywords": [
+    "Toby",
+    "Boyd"
+  ],
+  "author": "Toby Boyd",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tobyb87/HomeMovieCollection/issues"
+  },
+  "homepage": "https://github.com/tobyb87/HomeMovieCollection#readme",
+  "dependencies": {
+    "basename": "^0.1.2",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "require": "^2.4.20"
+  },
+  "devDependencies": {}
+}

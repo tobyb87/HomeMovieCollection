@@ -3,13 +3,13 @@ $(document).ready(function() {
   var bodyInput = $("#body");
   var titleInput = $("#title");
   var cmsForm = $("#cms");
-  var authorSelect = $("#movie");
+  var movieSelect = $("#movie");
   // Adding an event listener for when the form is submitted
   $(cmsForm).on("submit", handleFormSubmit);
   // Gets the part of the url that comes after the "?" (which we have if we're updating a post)
   var url = window.location.search;
   var postId;
-  var authorId;
+  var movieId;
   // Sets a flag for whether or not we're updating a post to be false initially
   var updating = false;
 
@@ -19,19 +19,19 @@ $(document).ready(function() {
     postId = url.split("=")[1];
     getPostData(postId, "post");
   }
-  // Otherwise if we have an author_id in our url, preset the movie select box to be our movie
-  else if (url.indexOf("?author_id=") !== -1) {
-    authorId = url.split("=")[1];
+  // Otherwise if we have an movie_id in our url, preset the movie select box to be our Movie
+  else if (url.indexOf("?movie_id=") !== -1) {
+    movieId = url.split("=")[1];
   }
 
-  // Getting the Movies, and their posts
-  getAuthors();
+  // Getting the movies, and their posts
+  getMovies();
 
   // A function for handling what happens when the form to create a new post is submitted
   function handleFormSubmit(event) {
     event.preventDefault();
     // Wont submit the post if we are missing a body, title, or movie
-    if (!titleInput.val().trim() || !bodyInput.val().trim() || !authorSelect.val()) {
+    if (!titleInput.val().trim() || !bodyInput.val().trim() || !movieSelect.val()) {
       return;
     }
     // Constructing a newPost object to hand to the database
@@ -42,7 +42,7 @@ $(document).ready(function() {
       body: bodyInput
         .val()
         .trim(),
-      AuthorId: authorSelect.val()
+      MovieId: movieSelect.val()
     };
 
     // If we're updating a post run updatePost to update a post
@@ -71,18 +71,18 @@ $(document).ready(function() {
         queryUrl = "/api/posts/" + id;
         break;
       case "movie":
-        queryUrl = "/api/Movies/" + id;
+        queryUrl = "/api/movies/" + id;
         break;
       default:
         return;
     }
     $.get(queryUrl, function(data) {
       if (data) {
-        console.log(data.AuthorId || data.id);
+        console.log(data.MovieId || data.id);
         // If this post exists, prefill our cms forms with its data
         titleInput.val(data.title);
         bodyInput.val(data.body);
-        authorId = data.AuthorId || data.id;
+        movieId = data.MovieId || data.id;
         // If we have a post with this id, set a flag for us to know to update the post
         // when we hit submit
         updating = true;
@@ -91,29 +91,29 @@ $(document).ready(function() {
   }
 
   // A function to get Movies and then render our list of Movies
-  function getAuthors() {
-    $.get("/api/Movies", renderAuthorList);
+  function getMovies() {
+    $.get("/api/movies", renderMovieList);
   }
-  // Function to either render a list of Movies, or if there are none, direct the user to the page
+  // Function to either render a list of movies, or if there are none, direct the user to the page
   // to create an movie first
-  function renderAuthorList(data) {
+  function renderMovieList(data) {
     if (!data.length) {
-      window.location.href = "/Movies";
+      window.location.href = "/movies";
     }
     $(".hidden").removeClass("hidden");
     var rowsToAdd = [];
     for (var i = 0; i < data.length; i++) {
-      rowsToAdd.push(createAuthorRow(data[i]));
+      rowsToAdd.push(createMovieRow(data[i]));
     }
-    authorSelect.empty();
+    movieSelect.empty();
     console.log(rowsToAdd);
-    console.log(authorSelect);
-    authorSelect.append(rowsToAdd);
-    authorSelect.val(authorId);
+    console.log(movieSelect);
+    movieSelect.append(rowsToAdd);
+    movieSelect.val(movieId);
   }
 
   // Creates the movie options in the dropdown
-  function createAuthorRow(movie) {
+  function createMovieRow(movie) {
     var listOption = $("<option>");
     listOption.attr("value", movie.id);
     listOption.text(movie.name);

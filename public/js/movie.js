@@ -1,68 +1,68 @@
 $(document).ready(function() {
-  // Getting references to the name inout and movies container, as well as the table body
-  var nameInput = $("#movies-name");
-  var moviesList = $("tbody");
-  var moviesContainer = $(".movies-container");
+  // Getting references to the name inout and movie container, as well as the table body
+  var nameInput = $("#movie-name");
+  var movieList = $("tbody");
+  var movieContainer = $(".movie-container");
   // Adding event listeners to the form to create a new object, and the button to delete
-  // an movies
-  $(document).on("submit", "#movies-form", handlemoviesFormSubmit);
-  $(document).on("click", ".delete-movies", handleDeleteButtonPress);
+  // an Movie
+  $(document).on("submit", "#movie-form", handleMovieFormSubmit);
+  $(document).on("click", ".delete-movie", handleDeleteButtonPress);
 
-  // Getting the intiial list of movies
-  getmovies();
+  // Getting the intiial list of Movies
+  getMovies();
 
-  // A function to handle what happens when the form is submitted to create a new movies
-  function handlemoviesFormSubmit(event) {
+  // A function to handle what happens when the form is submitted to create a new Movie
+  function handleMovieFormSubmit(event) {
     event.preventDefault();
     // Don't do anything if the name fields hasn't been filled out
     if (!nameInput.val().trim().trim()) {
       return;
     }
-    // Calling the upsertmovies function and passing in the value of the name input
-    upsertmovies({
+    // Calling the upsertMovie function and passing in the value of the name input
+    upsertMovie({
       name: nameInput
         .val()
         .trim()
     });
   }
 
-  // A function for creating an movies. Calls getmovies upon completion
-  function upsertmovies(moviesData) {
-    $.post("/api/movies", moviesData)
-      .then(getmovies);
+  // A function for creating an movie. Calls getMovies upon completion
+  function upsertMovie(movieData) {
+    $.post("/api/movies", movieData)
+      .then(getMovies);
   }
 
   // Function for creating a new list row for movies
-  function createmoviesRow(moviesData) {
+  function createMovieRow(movieData) {
     var newTr = $("<tr>");
-    newTr.data("movies", moviesData);
-    newTr.append("<td>" + moviesData.name + "</td>");
-    newTr.append("<td> " + moviesData.Posts.length + "</td>");
-    newTr.append("<td><a href='/blog?movies_id=" + moviesData.id + "'>Go to Posts</a></td>");
-    newTr.append("<td><a href='/cms?movies_id=" + moviesData.id + "'>Create a Post</a></td>");
-    newTr.append("<td><a style='cursor:pointer;color:red' class='delete-movies'>Delete movies</a></td>");
+    newTr.data("movie", movieData);
+    newTr.append("<td>" + movieData.name + "</td>");
+    newTr.append("<td> " + movieData.Posts.length + "</td>");
+    newTr.append("<td><a href='/blog?movie_id=" + movieData.id + "'>Go to Plots</a></td>");
+    newTr.append("<td><a href='/cms?movie_id=" + movieData.id + "'>Create a Post</a></td>");
+    newTr.append("<td><a style='cursor:pointer;color:red' class='delete-movie'>Delete Movie</a></td>");
     return newTr;
   }
 
   // Function for retrieving movies and getting them ready to be rendered to the page
-  function getmovies() {
+  function getMovies() {
     $.get("/api/movies", function(data) {
       var rowsToAdd = [];
       for (var i = 0; i < data.length; i++) {
-        rowsToAdd.push(createmoviesRow(data[i]));
+        rowsToAdd.push(createMovieRow(data[i]));
       }
-      rendermoviesList(rowsToAdd);
+      renderMovieList(rowsToAdd);
       nameInput.val("");
     });
   }
 
   // A function for rendering the list of movies to the page
-  function rendermoviesList(rows) {
-    moviesList.children().not(":last").remove();
-    moviesContainer.children(".alert").remove();
+  function renderMovieList(rows) {
+    movieList.children().not(":last").remove();
+    movieContainer.children(".alert").remove();
     if (rows.length) {
       console.log(rows);
-      moviesList.prepend(rows);
+      movieList.prepend(rows);
     }
     else {
       renderEmpty();
@@ -73,18 +73,18 @@ $(document).ready(function() {
   function renderEmpty() {
     var alertDiv = $("<div>");
     alertDiv.addClass("alert alert-danger");
-    alertDiv.html("You must create an movies before you can create a Post.");
-    moviesContainer.append(alertDiv);
+    alertDiv.html("You must create an Movie before you can create a Post.");
+    movieContainer.append(alertDiv);
   }
 
   // Function for handling what happens when the delete button is pressed
   function handleDeleteButtonPress() {
-    var listItemData = $(this).parent("td").parent("tr").data("movies");
+    var listItemData = $(this).parent("td").parent("tr").data("movie");
     var id = listItemData.id;
     $.ajax({
       method: "DELETE",
       url: "/api/movies/" + id
     })
-    .done(getmovies);
+    .done(getMovies);
   }
 });
